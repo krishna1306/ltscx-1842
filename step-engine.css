@@ -1,0 +1,95 @@
+/*
+ * Step-scene engine styles. Pair with step-engine.js.
+ * Override the tokens in your deck theme; nothing here is brand-specific.
+ */
+:root {
+  --surface: #131a27;
+  --surface-2: #1a2334;
+  --line: #2a3650;
+  --text: #eaf0f8;
+  --muted: #93a0b6;
+  --dim: #5d6a82;
+  --accent: #ff3e8a;
+  --ease: cubic-bezier(.22, .8, .24, 1);
+  --t: .7s;
+}
+
+/* ---------- Frame + stage: one fixed coordinate space per scene ----------
+   Reveal canvas 1280x720 → frame 1152x640 → stage 1152x440 (header ~110, captions 64). */
+.frame { position: relative; width: 1152px; height: 640px; margin: 0 auto; display: flex; flex-direction: column; }
+.frame, .frame *, .frame *::before, .frame *::after { box-sizing: border-box; }
+.stage { position: relative; height: 440px; margin-top: 18px; flex: none; }
+.stage > svg.wires { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+
+.node {
+  position: absolute; background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 14px; font-size: 16px; line-height: 1.3;
+  transition: opacity var(--t) var(--ease), transform var(--t) var(--ease), border-color var(--t) var(--ease),
+              box-shadow var(--t) var(--ease), background var(--t), left var(--t) var(--ease), top var(--t) var(--ease);
+}
+.node h4 { margin: 0 0 4px; font-size: 17px; line-height: 1.2; color: var(--text); }
+.node p { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+/* ---------- Wires: draw-in (needs pathLength="1") and flowing packets ---------- */
+.wire { fill: none; stroke: var(--line); stroke-width: 2; }
+.wire.draw { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1s var(--ease); }
+.packets {
+  fill: none; stroke-width: 7; stroke-linecap: round; stroke: var(--accent);
+  stroke-dasharray: .1 30; opacity: 0; transition: opacity .4s;
+  animation: sc-march 1s linear infinite;
+}
+.packets.blob { stroke-width: 12; stroke-dasharray: 10 50; animation-name: sc-march-blob; animation-duration: 1.6s; }
+@keyframes sc-march { to { stroke-dashoffset: -30.1; } }
+@keyframes sc-march-blob { to { stroke-dashoffset: -60; } }
+
+/* ---------- Step utilities ----------
+   .aN appear at step N (default rise; .pop scales, .fade only fades)
+   .hN hide from step N on                 .beat = generated fragments  */
+.a1,.a2,.a3,.a4,.a5,.a6,.a7,.a8,.a9 { opacity: 0; transform: translateY(14px); }
+.a1.pop,.a2.pop,.a3.pop,.a4.pop,.a5.pop,.a6.pop,.a7.pop,.a8.pop,.a9.pop { transform: scale(.85); }
+.a1.fade,.a2.fade,.a3.fade,.a4.fade,.a5.fade,.a6.fade,.a7.fade,.a8.fade,.a9.fade { transform: none; }
+.a1,.a2,.a3,.a4,.a5,.a6,.a7,.a8,.a9,.h1,.h2,.h3,.h4,.h5,.h6,.h7,.h8,.h9 {
+  transition: opacity var(--t) var(--ease), transform var(--t) var(--ease), stroke-dashoffset 1s var(--ease);
+}
+section.s1 .a1, section.s2 .a2, section.s3 .a3, section.s4 .a4, section.s5 .a5,
+section.s6 .a6, section.s7 .a7, section.s8 .a8, section.s9 .a9 { opacity: 1; transform: none; }
+section.s1 .h1, section.s2 .h2, section.s3 .h3, section.s4 .h4, section.s5 .h5,
+section.s6 .h6, section.s7 .h7, section.s8 .h8, section.s9 .h9 { opacity: 0 !important; pointer-events: none; }
+.wire.a1,.wire.a2,.wire.a3,.wire.a4,.wire.a5,.wire.a6,.wire.a7,.wire.a8,.wire.a9 { opacity: 1; transform: none; }
+section.s1 .wire.a1, section.s2 .wire.a2, section.s3 .wire.a3, section.s4 .wire.a4, section.s5 .wire.a5,
+section.s6 .wire.a6, section.s7 .wire.a7, section.s8 .wire.a8, section.s9 .wire.a9 { stroke-dashoffset: 0; }
+section.s1 .packets.a1, section.s2 .packets.a2, section.s3 .packets.a3, section.s4 .packets.a4, section.s5 .packets.a5,
+section.s6 .packets.a6, section.s7 .packets.a7, section.s8 .packets.a8, section.s9 .packets.a9 { opacity: 1; }
+.beat { display: none !important; }
+
+/* ---------- Captions: exactly one line visible per step ---------- */
+.caps { position: relative; height: 64px; margin-top: auto; border-top: 1px solid var(--line); }
+.caps p {
+  position: absolute; inset: 14px 0 0 0; margin: 0; font-size: 18.5px; line-height: 1.4; color: var(--muted);
+  opacity: 0; transform: translateY(6px); transition: opacity .45s var(--ease), transform .45s var(--ease);
+}
+.caps p b { color: var(--text); font-weight: 600; }
+.caps p .n {
+  display: inline-grid; place-items: center; width: 24px; height: 24px; margin-right: 10px; border-radius: 50%;
+  background: var(--accent); color: #fff; font: 700 12px/1 ui-monospace, monospace; vertical-align: 2px;
+}
+section[data-step="0"] .caps [data-at="0"], section[data-step="1"] .caps [data-at="1"],
+section[data-step="2"] .caps [data-at="2"], section[data-step="3"] .caps [data-at="3"],
+section[data-step="4"] .caps [data-at="4"], section[data-step="5"] .caps [data-at="5"],
+section[data-step="6"] .caps [data-at="6"], section[data-step="7"] .caps [data-at="7"],
+section[data-step="8"] .caps [data-at="8"], section[data-step="9"] .caps [data-at="9"] { opacity: 1; transform: none; }
+
+/* ---------- Minimap: persistent "where are we" map outside the slides ---------- */
+.minimap { position: fixed; top: 18px; right: 22px; z-index: 30; display: flex; gap: 4px; align-items: center;
+  font: 600 10.5px/1 ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; transition: opacity .4s; }
+.minimap span { padding: 6px 9px; border-radius: 999px; color: var(--dim); border: 1px solid transparent; transition: all .4s var(--ease); }
+.minimap span[data-on] { color: #0a0e15; background: var(--c, var(--accent)); border-color: var(--c, var(--accent)); }
+.minimap i { width: 10px; height: 1px; background: var(--line); }
+.minimap.hidden { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal *, .reveal *::before, .reveal *::after {
+    transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+  }
+  .packets { stroke-dasharray: none; stroke-width: 3; }
+}

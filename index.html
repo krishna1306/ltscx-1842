@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Driving Business Value through Services as Code · LTSCX-1842</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@6.0.2/dist/reveal.css">
+  <link rel="stylesheet" href="step-engine.css">
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    /* ---------- Shared slide pieces ---------- */
+    .lane-label { position: absolute; left: 0; width: 140px; display: flex; flex-direction: column; gap: 8px;
+      font: 600 14px/1.25 var(--font); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .lane-label svg { width: 28px; height: 28px; color: var(--cyan); }
+    .detail { position: absolute; display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+      padding: 8px 0 0 12px; border-left: 2px solid var(--c); }
+    .detail p { margin: 0; font-size: 14.5px; line-height: 1.35; color: var(--muted); }
+
+    /* ---------- 1 · DevOps lanes ---------- */
+    #s-devops .node.sw { height: 76px; }
+    #s-devops .node.nw { height: 112px; }
+    #s-devops .detail { top: 330px; }
+    #s-devops .prs { position: absolute; display: flex; gap: 6px; }
+    #s-devops .prs span { font: 600 11.5px var(--mono); color: var(--blue); padding: 2px 7px; border-radius: 6px;
+      border: 1px solid color-mix(in srgb, var(--blue) 45%, transparent); }
+    #s-devops path.divider { fill: none; stroke: var(--line); stroke-dasharray: 6 8; }
+    #s-devops .lane-gap { position: absolute; left: 0; right: 0; top: 162px; text-align: center; }
+    #s-devops .lane-gap span { background: var(--bg); padding: 0 16px; font: 600 12.5px var(--mono);
+      letter-spacing: .14em; text-transform: uppercase; color: var(--purple); }
+    #s-devops.s1 .sw-dev, #s-devops.s2 .sw-test, #s-devops.s2 .sw-rev, #s-devops.s3 .sw-prod,
+    #s-devops.s4 .nw-chg, #s-devops.s5 .nw-val, #s-devops.s6 .nw-rev, #s-devops.s7 .nw-test {
+      border-color: var(--c); box-shadow: 0 0 0 1px var(--c), 0 0 30px color-mix(in srgb, var(--c) 28%, transparent); }
+    #s-devops.s4 .sw { opacity: .28; }
+    #s-devops.s4 .packets.sw { opacity: 0; }
+    #s-devops.s8 .nw { --c: var(--green); }
+
+    /* ---------- 2 · Data model hub ---------- */
+    #s-sac .out { left: 600px; width: 552px; height: 120px; padding: 12px 16px; }
+    #s-sac .out .tool { position: absolute; right: 14px; top: 13px; font: 600 11.5px var(--mono); color: var(--dim); }
+    #s-sac .out .chips { margin-top: 9px; }
+    #s-sac .yaml { transition: opacity var(--t) var(--ease), box-shadow var(--t), border-color var(--t); }
+    #s-sac .yaml .chips { position: absolute; left: 18px; bottom: 14px; }
+    #s-sac .yaml .src { font-size: 15px; line-height: 1.55; }
+    #s-sac.s2 .yaml, #s-sac.s3 .out-val, #s-sac.s4 .out-dep, #s-sac.s5 .out-test {
+      border-color: var(--c); box-shadow: 0 0 0 1px var(--c), 0 0 30px color-mix(in srgb, var(--c) 28%, transparent); }
+    #s-sac .proof { position: absolute; left: 0; top: 376px; width: 470px; display: flex; gap: 10px; align-items: flex-start;
+      font-size: 15px; line-height: 1.4; color: var(--muted); }
+    #s-sac .proof svg { width: 20px; height: 20px; color: var(--green); margin-top: 1px; }
+    #s-sac .proof b { color: var(--text); }
+    #s-sac .sub { transition: background .5s, box-shadow .5s, color .5s; }
+    #s-sac mark.sub { padding: 0 3px; border-radius: 5px; }
+    #s-sac.s6 .sub { background: color-mix(in srgb, var(--cyan) 24%, transparent); box-shadow: 0 0 0 2px var(--cyan); color: var(--text); }
+
+    /* ---------- 3 · Value columns ---------- */
+    #s-value .vcol { position: absolute; top: 0; width: 368px; padding-top: 16px; border-top: 3px solid var(--c); }
+    #s-value .vhead { display: flex; align-items: center; gap: 12px; color: var(--c); }
+    #s-value .vhead svg { width: 26px; height: 26px; }
+    #s-value .num { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+      background: var(--c); color: var(--bg); font: 700 15px var(--mono); }
+    #s-value h3 { font-size: 24px; line-height: 1.2; margin: 12px 0 8px; font-weight: 700; }
+    #s-value .vcol > p { margin: 0; font-size: 16.5px; line-height: 1.45; color: var(--muted); }
+    #s-value .mini { margin-top: 24px; height: 128px; padding: 12px 14px;
+      background: #041024; border: 1px solid var(--line); border-radius: 12px;
+      display: flex; flex-direction: column; justify-content: center; gap: 9px; }
+    #s-value .mini .row { display: flex; align-items: center; justify-content: space-between; }
+    #s-value .mini em { font: 500 12.5px var(--mono); font-style: normal; color: var(--dim); }
+    #s-value .mini .rule { font: 13px var(--mono); color: var(--muted); }
+    #s-value .mini .rule b { color: var(--purple); margin-right: 6px; }
+    #s-value .log div { display: flex; gap: 10px; font: 12.5px var(--mono); color: var(--text); white-space: nowrap; }
+    #s-value .log .sha { color: var(--blue); }
+    #s-value .log em { margin-left: auto; }
+    #s-value[data-step="2"] .v1, #s-value[data-step="3"] .v1, #s-value[data-step="3"] .v2 { opacity: .4; }
+    #s-value .vsum { position: absolute; left: 0; right: 0; top: 372px; display: flex; align-items: center;
+      justify-content: center; gap: 18px; font: 700 22px var(--font); }
+    #s-value .vsum i { flex: 0 0 70px; height: 1px; background: var(--line); }
+    #s-value .vsum span:nth-of-type(1) { color: var(--green); }
+    #s-value .vsum span:nth-of-type(2) { color: var(--purple); }
+    #s-value .vsum span:nth-of-type(3) { color: var(--blue); }
+
+    /* ---------- 4 · Cisco IQ ---------- */
+    #s-iq .stack-box { position: absolute; left: 0; top: 0; width: 520px; height: 440px;
+      border: 1.5px dashed var(--line); border-radius: 16px; }
+    #s-iq .stack-box span { position: absolute; left: 30px; top: 22px; font: 600 12.5px var(--mono);
+      letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+    #s-iq .layer { left: 30px; width: 460px; height: 72px; display: flex; align-items: center; gap: 16px; z-index: 2; --c: var(--blue); }
+    #s-iq .layer > svg, #s-iq .blocker > svg { width: 28px; height: 28px; color: var(--c); }
+    #s-iq.s3 .layer { border-color: var(--blue); }
+    #s-iq .blocker { left: 632px; width: 520px; height: 110px; display: flex; align-items: center; gap: 18px;
+      border-style: dashed; border-color: color-mix(in srgb, var(--red) 55%, transparent); }
+    #s-iq .blocker h4 { font-size: 19px; }
+    #s-iq .blocker p { font-size: 15.5px; }
+    #s-iq .iq { position: absolute; left: 632px; top: 0; width: 520px; height: 440px; border: 2px solid var(--blue); border-radius: 18px;
+      background: color-mix(in srgb, var(--blue) 9%, transparent); box-shadow: 0 0 44px color-mix(in srgb, var(--blue) 24%, transparent); }
+    #s-iq .iq-head { display: flex; align-items: center; gap: 10px; padding: 16px 30px 0; color: var(--blue); }
+    #s-iq .iq-head svg { width: 24px; height: 24px; }
+    #s-iq .iq-head b { font-size: 21px; color: var(--text); }
+    #s-iq .iq-head span { margin-left: auto; font: 600 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    #s-iq .cta { position: absolute; left: 0; top: 100px; width: 570px; }
+    #s-iq .cta a { display: inline-block; margin: 16px 0; font: 800 50px/1.1 var(--font); color: var(--cyan); letter-spacing: -.015em;
+      text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 10px; }
+    #s-iq .cta a:focus-visible { outline: 3px solid var(--cyan); outline-offset: 6px; border-radius: 6px; }
+    #s-iq .cta p { margin: 0; font-size: 20px; line-height: 1.45; color: var(--muted); }
+  </style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+  <!-- Title -->
+  <section id="title">
+    <div class="frame hero">
+      <div class="eyebrow">Cisco Live · Lightning Talk · LTSCX-1842</div>
+      <h1>Driving business value<br>through <span class="hl">Services as Code</span></h1>
+      <p class="dek">From keeping the lights on to changing the network often, safely, and on purpose.</p>
+      <div class="speaker">
+        <div class="avatar" aria-hidden="true">KB</div>
+        <div><b>Krishna Bandi</b><span>Automation and Observability Architect, Cisco Systems</span></div>
+      </div>
+      <div class="motif" aria-hidden="true">
+        <svg viewBox="0 0 1152 64">
+          <path class="wire" d="M40 22 L1112 22"/>
+          <path class="packets" d="M40 22 L1112 22" style="stroke:var(--cyan)"/>
+          <circle cx="40" cy="22" r="7" fill="var(--blue)"/>
+          <circle cx="308" cy="22" r="7" fill="var(--cyan)"/>
+          <circle cx="576" cy="22" r="7" fill="var(--purple)"/>
+          <circle cx="844" cy="22" r="7" fill="var(--blue)"/>
+          <circle cx="1112" cy="22" r="7" fill="var(--green)"/>
+          <text x="40" y="56" text-anchor="middle">Intent</text>
+          <text x="308" y="56" text-anchor="middle">Validate</text>
+          <text x="576" y="56" text-anchor="middle">Review</text>
+          <text x="844" y="56" text-anchor="middle">Deploy</text>
+          <text x="1112" y="56" text-anchor="middle">Test</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">0:30. Introduce yourself. One line: "In the next 14 minutes: why DevOps matters, what it looks like for a network, what Services as Code gives you, and what the business gets." The dots at the bottom are the colour code for the whole talk.</aside>
+  </section>
+
+  <!-- 1 · Why DevOps, then what it means for a network (two lanes) -->
+  <section id="s-devops" data-steps="8" data-stage="devops">
+    <div class="frame">
+      <div class="eyebrow">01 · Why DevOps matters</div>
+      <h2>Change often. Break nothing.</h2>
+      <div class="stage">
+        <svg class="wires" viewBox="0 0 1152 440" aria-hidden="true">
+          <path class="wire draw a2" pathLength="1" d="M350 82 L670 82"/>
+          <path class="wire draw a3" pathLength="1" d="M860 82 L920 82"/>
+          <path class="packets a3 sw" d="M170 82 L1152 82" style="stroke:var(--green)"/>
+          <path class="divider a4 fade" d="M0 172 L1152 172"/>
+          <path class="wire draw a5" pathLength="1" d="M330 261 L380 261"/>
+          <path class="wire draw a6" pathLength="1" d="M590 261 L640 261"/>
+          <path class="wire draw a7" pathLength="1" d="M850 261 L900 261"/>
+          <path class="packets a8" d="M170 261 L1152 261" style="stroke:var(--green)"/>
+        </svg>
+
+        <div class="lane-label sw a1" style="top:58px"><i data-lucide="code-xml"></i><span>Software<br>teams</span></div>
+        <div class="node sw sw-dev a1" style="left:170px;top:44px;width:180px;--c:var(--blue)"><h4><i data-lucide="git-commit-horizontal"></i>Developers</h4><p>many small changes, in parallel</p></div>
+        <div class="prs sw a1" style="left:170px;top:128px"><span>#412</span><span>#413</span><span>#414</span><span>#415</span><span>#416</span></div>
+        <div class="node sw sw-test a2" style="left:410px;top:44px;width:200px;--c:var(--green)"><h4><i data-lucide="flask-conical"></i>Automated tests</h4><p>run on every change</p></div>
+        <div class="node sw sw-rev a2" style="left:670px;top:44px;width:190px;--c:var(--purple)"><h4><i data-lucide="user-check"></i>Peer review</h4><p>a second pair of eyes</p></div>
+        <div class="node sw sw-prod a3 pop" style="left:920px;top:44px;width:232px;--c:var(--green)"><h4><i data-lucide="rocket"></i>Production</h4><p>changes daily, stays stable</p></div>
+
+        <div class="lane-gap a4"><span>Same goal · gates that speak network</span></div>
+
+        <div class="lane-label a4" style="top:230px"><i data-lucide="network"></i><span>Network<br>teams</span></div>
+        <div class="node nw nw-chg a4" style="left:170px;top:205px;width:160px;--c:var(--blue)"><h4><i data-lucide="git-pull-request"></i>A change</h4><p>new tenant, VLAN, policy, or site</p></div>
+        <div class="node nw nw-val a5" style="left:380px;top:205px;width:210px;--c:var(--cyan)"><h4><i data-lucide="list-checks"></i>Pre-change validation</h4><p>Valid? Breaks nothing that already exists?</p></div>
+        <div class="node nw nw-rev a6" style="left:640px;top:205px;width:210px;--c:var(--purple)"><h4><i data-lucide="user-check"></i>Review policy</h4><p>Which changes need a senior engineer?</p></div>
+        <div class="node nw nw-test a7" style="left:900px;top:205px;width:252px;--c:var(--green)"><h4><i data-lucide="flask-conical"></i>Deploy, then test</h4><p>Prove it worked, in production</p></div>
+
+        <div class="detail a5" style="left:380px;width:210px;--c:var(--red)">
+          <span class="chip bad"><i data-lucide="x"></i>subnet overlap</span>
+          <p>Blocked before it reaches the network.</p>
+        </div>
+        <div class="detail a6" style="left:640px;width:210px;--c:var(--purple)">
+          <span class="chip pol">BGP change → senior</span>
+          <span class="chip pol">new VLAN → auto</span>
+        </div>
+        <div class="detail a7" style="left:900px;width:252px;--c:var(--green)">
+          <span class="chip ok"><i data-lucide="check"></i>config applied</span>
+          <span class="chip ok"><i data-lucide="check"></i>operating as expected</span>
+          <span class="chip ok"><i data-lucide="check"></i>health not degraded</span>
+        </div>
+      </div>
+      <div class="caps">
+        <p data-at="0">Press <b>→</b> : what does DevOps actually give software teams?</p>
+        <p data-at="1"><span class="n">1</span>Developers push <b>many small changes</b> every day, often in parallel.</p>
+        <p data-at="2"><span class="n">2</span>Every change is <b>tested automatically</b> and <b>reviewed by a peer</b> before it merges.</p>
+        <p data-at="3"><span class="n">3</span>So production changes often <b>and stays stable</b>. The confidence comes from the process.</p>
+        <p data-at="4"><span class="n">4</span>Your network needs the same agility. <b>Same goal</b>, but the gates must speak network.</p>
+        <p data-at="5"><span class="n">5</span><b>Pre-change validation</b>: an invalid change, or one that breaks what exists, never leaves the pipeline.</p>
+        <p data-at="6"><span class="n">6</span>A <b>review policy</b> decides which changes need a senior engineer, and which flow straight through.</p>
+        <p data-at="7"><span class="n">7</span>After deploy, <b>tests prove it</b>: config landed, the network works as expected, health is intact.</p>
+        <p data-at="8"><span class="n">8</span>That is DevOps for the network, and it is exactly what <b>Services as Code</b> gives you.</p>
+      </div>
+    </div>
+    <aside class="notes">3:30 total. Keep the software half short (about 60 seconds), the audience is network people.
+      1: "Developers make dozens of changes, many people at once."
+      2: Point at tests and review. "Nobody pushes straight to production."
+      3: "That is the real promise of DevOps: speed AND stability. Confidence comes from the process, not heroics."
+      4: Transition line: "Now imagine your network could change like that." The software lane fades: we are leaving it behind.
+      5: Point at the red chip. "A subnet that overlaps something already in production is stopped here, before any device sees it."
+      6: "You decide the policy. A BGP change waits for a senior engineer. A new VLAN can go straight through."
+      7: Three kinds of test: configuration (did it land), operational (is the network doing what we expect: neighbours up, endpoints learned), health (no new faults, health score not degraded where the controller provides one).
+      8: "Hold that picture. That is what Services as Code delivers."</aside>
+  </section>
+
+  <!-- 2 · What Services as Code does: one data model → validate, deploy, test -->
+  <section id="s-sac" data-steps="6" data-stage="sac">
+    <div class="frame">
+      <div class="eyebrow">02 · What Services as Code does</div>
+      <h2>One data model drives everything.</h2>
+      <div class="stage">
+        <svg class="wires" viewBox="0 0 1152 440" aria-hidden="true">
+          <path class="wire draw a3" pathLength="1" d="M470 180 C540 180 530 60 600 60"/>
+          <path class="packets a3" d="M470 180 C540 180 530 60 600 60" style="stroke:var(--cyan)"/>
+          <path class="wire draw a4" pathLength="1" d="M470 180 C540 180 530 220 600 220"/>
+          <path class="packets a4" d="M470 180 C540 180 530 220 600 220" style="stroke:var(--blue)"/>
+          <path class="wire draw a5" pathLength="1" d="M470 180 C540 180 530 380 600 380"/>
+          <path class="packets a5" d="M470 180 C540 180 530 380 600 380" style="stroke:var(--green)"/>
+        </svg>
+
+        <div class="code hcl a1 h2 fade" style="left:0;top:0;width:470px;height:360px">
+          <div class="head"><i data-lucide="file-code"></i>Raw Terraform: you own the plumbing<span class="tag">illustrative</span></div>
+<div class="src"><span class="t">resource</span> <span class="s">"aci_tenant"</span> <span class="s">"prod"</span> { name = <span class="s">"PROD"</span> }
+<span class="t">resource</span> <span class="s">"aci_vrf"</span> <span class="s">"prod"</span> {
+  <span class="k">tenant_dn</span> = aci_tenant.prod.id
+  <span class="k">name</span>      = <span class="s">"PROD"</span>
+}
+<span class="t">resource</span> <span class="s">"aci_bridge_domain"</span> <span class="s">"web"</span> {
+  <span class="k">tenant_dn</span>          = aci_tenant.prod.id
+  <span class="k">name</span>               = <span class="s">"WEB"</span>
+  <span class="k">relation_fv_rs_ctx</span> = aci_vrf.prod.id
+}
+<span class="t">resource</span> <span class="s">"aci_subnet"</span> <span class="s">"web"</span> {
+  <span class="k">parent_dn</span> = aci_bridge_domain.web.id
+  <span class="k">ip</span>        = <span class="s">"10.1.1.1/24"</span>
+}</div>
+        </div>
+
+        <div class="code yaml a2 fade" style="left:0;top:0;width:470px;height:360px;--c:var(--blue)">
+          <div class="head"><i data-lucide="file-text"></i>Network as Code data model: you state intent</div>
+<div class="src"><span class="k">apic</span>:
+  <span class="k">tenants</span>:
+    - <span class="k">name</span>: PROD
+      <span class="k">vrfs</span>:
+        - <span class="k">name</span>: PROD
+      <span class="k">bridge_domains</span>:
+        - <span class="k">name</span>: WEB
+          <span class="k">vrf</span>: PROD
+          <span class="k">subnets</span>:
+            - <span class="k">ip</span>: <mark class="sub">10.1.1.1/24</mark></div>
+          <div class="chips"><span class="chip dep">readable</span><span class="chip dep">reviewable</span><span class="chip dep">best-practice defaults</span></div>
+        </div>
+
+        <div class="proof a4"><i data-lucide="badge-check"></i><span>Built from <b>6+ years</b> of Cisco delivery · <b>13+</b> architectures · <b>300+</b> customer deployments</span></div>
+
+        <div class="node out out-val a3" style="top:0;--c:var(--cyan)">
+          <span class="tool">nac-validate</span>
+          <h4><i data-lucide="shield-check"></i>Validate before deploy</h4><p>Schema, semantic checks, and your own rules</p>
+          <div class="chips"><span class="chip val"><i data-lucide="check"></i>schema</span><span class="chip val"><i data-lucide="check"></i>references resolve</span><span class="chip val sub"><i data-lucide="check"></i>10.1.1.1/24 no overlap</span></div>
+        </div>
+        <div class="node out out-dep a4" style="top:160px;--c:var(--blue)">
+          <span class="tool">Cisco-maintained modules</span>
+          <h4><i data-lucide="workflow"></i>Deploy through your engine</h4><p>The model becomes controller API calls</p>
+          <div class="chips"><span class="chip dep">Terraform</span><span class="chip dep">OpenTofu</span><span class="chip dep">Ansible</span><span class="chip dep sub">aci_subnet 10.1.1.1/24</span></div>
+        </div>
+        <div class="node out out-test a5" style="top:320px;--c:var(--green)">
+          <span class="tool">nac-test</span>
+          <h4><i data-lucide="flask-conical"></i>Test after deploy</h4><p>Tests generated from the same model</p>
+          <div class="chips"><span class="chip ok">config</span><span class="chip ok">operational</span><span class="chip ok">health</span><span class="chip ok sub"><i data-lucide="check"></i>10.1.1.1/24 present</span></div>
+        </div>
+      </div>
+      <div class="caps">
+        <p data-at="0">Press <b>→</b> : what does it take to describe one network change as code?</p>
+        <p data-at="1"><span class="n">1</span>With raw Terraform you own the plumbing: providers, resources, IDs, and the links between them.</p>
+        <p data-at="2"><span class="n">2</span>Services as Code abstracts the intent into a <b>data model</b>: readable, reviewable, no Terraform to learn.</p>
+        <p data-at="3"><span class="n">3</span>Because intent is structured, it is <b>validated</b> before deploy: schema, semantics, and your own rules.</p>
+        <p data-at="4"><span class="n">4</span>Cisco-maintained modules <b>deploy</b> that same model through Terraform, OpenTofu, or Ansible.</p>
+        <p data-at="5"><span class="n">5</span><b>Tests</b> come from the same model too: configuration, operational state, and health.</p>
+        <p data-at="6"><span class="n">6</span>One value, three uses. <b>Write intent once</b>; validate, deploy, and test it from one source of truth.</p>
+      </div>
+    </div>
+    <aside class="notes">4:00 total. This is the core of the talk; slow down here.
+      1: "This is what Terraform asks of you for one bridge domain with one subnet. Four resources, wired together by IDs. Now multiply by a data centre." Do not read the code.
+      2: "This is the same thing as a Network as Code data model. A network engineer can read it, and review it in a pull request, without learning Terraform or Ansible. Cisco's best-practice defaults fill in the rest."
+      3: "The most important consequence: because the intent is structured data, we can validate it. Is it well-formed, do references resolve, does this subnet overlap anything, does it follow YOUR rules."
+      4: "Cisco writes and maintains the Terraform, OpenTofu, and Ansible modules that turn the model into API calls. Over six years of delivery learnings, corner cases, and performance work are baked in."
+      5: "The same data generates the tests: config is there, the network is operating, health has not degraded."
+      6: Point at the highlighted subnet in all four places. "One line of intent. Validated, deployed, tested. That is why the data model is the heart of Services as Code."</aside>
+  </section>
+
+  <!-- 3 · Business value: three outcome columns -->
+  <section id="s-value" data-steps="4" data-stage="value">
+    <div class="frame">
+      <div class="eyebrow">03 · Business value</div>
+      <h2>Three outcomes the business will notice.</h2>
+      <div class="stage">
+        <div class="vcol v1 a1" style="left:0;--c:var(--green)">
+          <div class="vhead"><span class="num">1</span><i data-lucide="rocket"></i></div>
+          <h3>Change more, with confidence</h3>
+          <p>Bad changes stop in the pipeline; tests catch anything after. The network keeps pace with an AI-speed business.</p>
+          <div class="mini">
+            <div class="row"><span class="chip bad"><i data-lucide="x"></i>overlap caught</span><em>pre-change</em></div>
+            <div class="row"><span class="chip pol"><i data-lucide="check"></i>policy approved</span><em>review</em></div>
+            <div class="row"><span class="chip ok"><i data-lucide="check"></i>healthy after</span><em>post-change</em></div>
+          </div>
+        </div>
+        <div class="vcol v2 a2" style="left:392px;--c:var(--purple)">
+          <div class="vhead"><span class="num">2</span><i data-lucide="scale"></i></div>
+          <h3>Policy, enforced as code</h3>
+          <p>Standards and business rules run on every change, automatically. No checklists, no tribal knowledge.</p>
+          <div class="mini">
+            <div class="rule"><b>rule</b> tenant names start with a site code</div>
+            <div class="row"><span class="chip ok"><i data-lucide="check"></i>MEL-PROD</span><em>passes</em></div>
+            <div class="row"><span class="chip bad"><i data-lucide="x"></i>prod-test</span><em>blocked</em></div>
+          </div>
+        </div>
+        <div class="vcol v3 a3" style="left:784px;--c:var(--blue)">
+          <div class="vhead"><span class="num">3</span><i data-lucide="search-check"></i></div>
+          <h3>See exactly what is configured</h3>
+          <p>The data model is a readable, versioned record of your network. Audit and investigate in Git, not raw API output.</p>
+          <div class="mini log">
+            <div><span class="sha">a91f2c</span>add WEB subnet<em>@priya</em></div>
+            <div><span class="sha">7c04e1</span>new VRF MEL-PROD<em>@sam</em></div>
+            <div><span class="sha">3be210</span>BGP peer change<em>@lee · senior ✓</em></div>
+          </div>
+        </div>
+        <div class="vsum a4"><span>More change</span><i></i><span>Less risk</span><i></i><span>Full visibility</span></div>
+      </div>
+      <div class="caps">
+        <p data-at="0">Press <b>→</b> : what does the business actually get?</p>
+        <p data-at="1"><span class="n">1</span><b>More change, more confidence.</b> The pipeline stops what would break; tests catch the rest.</p>
+        <p data-at="2"><span class="n">2</span><b>Policy as code.</b> Standards and business rules are checked on every change, automatically.</p>
+        <p data-at="3"><span class="n">3</span><b>Full visibility.</b> What is configured, who changed it, and why: readable and searchable in Git.</p>
+        <p data-at="4"><span class="n">4</span>More change, less risk, full visibility: a network that moves at the speed of the business.</p>
+      </div>
+    </div>
+    <aside class="notes">3:00 total. About 50 seconds per outcome.
+      1: "Remember the gates from slide one. Because bad changes are caught before production and tests verify after, teams stop fearing change. More changes, more often. AI is making the business move faster; the network has to keep up."
+      2: "Your standards, naming, approved designs, which customer gets what: written once as rules that run on every change. Policy lives in code, not in someone's head."
+      3: "Need to audit or investigate? You read the data model and Git history, not raw controller API output. You know exactly what is configured, who changed it, and who approved it."
+      4: Land the three words. Pause.</aside>
+  </section>
+
+  <!-- 4 · Cisco IQ hosts the DevOps stack; call to action -->
+  <section id="s-iq" data-steps="4" data-stage="iq">
+    <div class="frame">
+      <div class="eyebrow">04 · Get started</div>
+      <h2>No DevOps stack? Cisco IQ brings one.</h2>
+      <div class="stage">
+        <div class="stack-box a1 fade h3"><span>Services as Code runs on a DevOps stack</span></div>
+
+        <div class="node layer a1 fade" style="top:64px" data-track='{"0":{"left":"30px"},"3":{"left":"662px"}}'><i data-lucide="git-branch"></i><div><h4>Git repository</h4><p>single source of truth for intent</p></div></div>
+        <div class="node layer a1 fade" style="top:152px;transition-delay:.08s" data-track='{"0":{"left":"30px"},"3":{"left":"662px"}}'><i data-lucide="play"></i><div><h4>Pipelines &amp; runners</h4><p>validate, deploy, and test every change</p></div></div>
+        <div class="node layer a1 fade" style="top:240px;transition-delay:.16s" data-track='{"0":{"left":"30px"},"3":{"left":"662px"}}'><i data-lucide="key-round"></i><div><h4>Secrets vault</h4><p>controller credentials never live in code</p></div></div>
+        <div class="node layer a1 fade" style="top:328px;transition-delay:.24s" data-track='{"0":{"left":"30px"},"3":{"left":"662px"}}'><i data-lucide="database"></i><div><h4>State &amp; artifacts</h4><p>what was deployed, and when</p></div></div>
+
+        <div class="node blocker a2 h3" style="top:84px;--c:var(--red)"><i data-lucide="circle-help"></i><div><h4>No stack in the network team</h4><p>tools, runners, and skills to stand up first</p></div></div>
+        <div class="node blocker a2 h3" style="top:236px;--c:var(--red)"><i data-lucide="lock"></i><div><h4>The app team's stack</h4><p>built for applications, not network access</p></div></div>
+
+        <div class="iq a3 pop"><div class="iq-head"><i data-lucide="cloud"></i><b>Cisco IQ</b><span>DevOps stack included</span></div></div>
+
+        <div class="cta a4">
+          <div class="eyebrow">Learn more</div>
+          <a href="https://netascode.cisco.com" target="_blank" rel="noopener">netascode.cisco.com</a>
+          <p>Data models, guides, and hands-on labs for every supported architecture.</p>
+        </div>
+      </div>
+      <div class="caps">
+        <p data-at="0">Press <b>→</b> : where does all of this actually run?</p>
+        <p data-at="1"><span class="n">1</span>Services as Code runs on a <b>DevOps stack</b>: Git, pipelines and runners, secrets, and state.</p>
+        <p data-at="2"><span class="n">2</span>Many network teams don't have one, and borrowing the app team's stack is rarely simple.</p>
+        <p data-at="3"><span class="n">3</span><b>Cisco IQ</b> comes with a DevOps stack built in, so you can start right away.</p>
+        <p data-at="4"><span class="n">4</span>Explore data models, guides, and labs at <b>netascode.cisco.com</b>.</p>
+      </div>
+    </div>
+    <aside class="notes">2:30 total.
+      1: "Everything you have seen needs somewhere to run: a Git repository, pipelines and runners, a secrets vault, and somewhere to keep state."
+      2: "Plenty of network teams don't have that. And if the application team has one, piggybacking on it is often harder than it sounds: different owners, different access, different priorities."
+      3: The stack slides into Cisco IQ. "If that is you, Cisco IQ comes with a DevOps stack, so you can start immediately and adopt Services as Code without building a platform first."
+      4: Give the URL slowly. "Everything I showed today is documented at netascode.cisco.com."</aside>
+  </section>
+
+  <!-- Close -->
+  <section id="thanks">
+    <div class="frame hero thanks">
+      <div class="eyebrow">LTSCX-1842</div>
+      <h1>Thank you</h1>
+      <div class="speaker">
+        <div class="avatar" aria-hidden="true">KB</div>
+        <div><b>Krishna Bandi</b><span>Automation and Observability Architect, Cisco Systems</span></div>
+      </div>
+    </div>
+    <aside class="notes">0:15. Thank the audience. Leave this up during questions.</aside>
+  </section>
+
+</div></div>
+
+<nav class="minimap hidden" aria-label="Talk progress">
+  <span data-k="devops" style="--c:var(--purple)">Network DevOps</span><i></i>
+  <span data-k="sac" style="--c:var(--cyan)">Services as Code</span><i></i>
+  <span data-k="value" style="--c:var(--green)">Business value</span><i></i>
+  <span data-k="iq" style="--c:var(--blue)">Cisco IQ</span>
+</nav>
+
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.js"></script>
+<script type="module">
+  import Reveal from "https://cdn.jsdelivr.net/npm/reveal.js@6.0.2/dist/reveal.mjs";
+  import RevealNotes from "https://cdn.jsdelivr.net/npm/reveal.js@6.0.2/dist/plugin/notes.mjs";
+  import { installStepScenes } from "./step-engine.js";
+
+  window.lucide?.createIcons({ attrs: { "stroke-width": 1.9, "aria-hidden": "true" } });
+  installStepScenes(Reveal, { minimap: document.querySelector(".minimap") });
+  Reveal.initialize({
+    hash: true, width: 1280, height: 720, margin: 0.04, center: true,
+    transition: "fade", backgroundTransition: "fade", controls: true, progress: true,
+    plugins: [RevealNotes]
+  });
+</script>
+</body>
+</html>

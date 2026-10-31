@@ -1,0 +1,92 @@
+/* Deck theme: Cisco Live dark. Colour code is shared by every slide:
+   blue = intent / data model, cyan = validation, purple = review & policy,
+   green = tests & healthy, red = blocked. */
+:root {
+  --bg: #06152b;
+  --surface: #0c2142;
+  --surface-2: #112a52;
+  --line: #24416f;
+  --text: #f3f7fc;
+  --muted: #a6b8d2;
+  --dim: #6a81a3;
+  --blue: #049fd9;
+  --cyan: #00bceb;
+  --purple: #a084ff;
+  --green: #6cc04a;
+  --red: #ff6159;
+  --accent: var(--cyan);
+  --font: "CiscoSansTT", "Inter", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+html, body, .reveal-viewport { background: var(--bg); }
+.reveal .controls, .reveal .progress { color: var(--cyan); }
+.reveal { font-family: var(--font); font-size: 22px; color: var(--text); }
+.reveal .slides { text-align: left; }
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+  font-family: var(--font); text-transform: none; letter-spacing: -.01em; color: var(--text);
+}
+.reveal h2 { font-size: 42px; line-height: 1.08; margin: 12px 0 0; font-weight: 700; }
+.eyebrow { font: 600 13px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+.hl { color: var(--cyan); }
+
+/* Lucide icons */
+.reveal svg.lucide { flex: 0 0 auto; }
+
+/* ---------- Nodes: --c sets the semantic colour ---------- */
+/* Restores glow/move transitions that the .aN utilities would otherwise override. */
+.reveal .node {
+  transition: opacity var(--t) var(--ease), transform var(--t) var(--ease), border-color var(--t) var(--ease),
+              box-shadow var(--t) var(--ease), left .9s var(--ease), top .9s var(--ease);
+}
+.node { --c: var(--line); }
+.node h4 { display: flex; align-items: center; gap: 8px; }
+.node h4 svg { width: 18px; height: 18px; color: var(--c); }
+
+/* ---------- Chips ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px;
+  font: 600 12.5px/1.3 var(--mono); color: var(--muted); background: var(--surface-2); border: 1px solid var(--line);
+}
+.chip svg { width: 13px; height: 13px; }
+.chip.ok { color: var(--green); border-color: color-mix(in srgb, var(--green) 50%, transparent); }
+.chip.bad { color: var(--red); border-color: color-mix(in srgb, var(--red) 55%, transparent); }
+.chip.pol { color: var(--purple); border-color: color-mix(in srgb, var(--purple) 50%, transparent); }
+.chip.val { color: var(--cyan); border-color: color-mix(in srgb, var(--cyan) 50%, transparent); }
+.chip.dep { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 55%, transparent); }
+
+/* ---------- Code panels ---------- */
+.code {
+  position: absolute; margin: 0; background: #041024; border: 1px solid var(--line); border-radius: 14px;
+  padding: 14px 18px; font: 13.5px/1.5 var(--mono); color: #cfe0f5; overflow: hidden;
+}
+.code .src { white-space: pre; }
+.code .head {
+  display: flex; align-items: center; gap: 8px; margin: -2px 0 10px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--line); font: 600 14px var(--font); color: var(--muted);
+}
+.code .head .tag { margin-left: auto; font: 600 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+.code .head svg { width: 16px; height: 16px; }
+.code .k { color: #7fd6f5; }
+.code .s { color: #b6e39f; }
+.code .t { color: #c9a8ff; }
+.code .c { color: var(--dim); }
+.code mark { background: none; color: inherit; border-radius: 4px; transition: background .5s, box-shadow .5s; }
+
+/* ---------- Hero / closing ---------- */
+.hero { justify-content: center; }
+.hero h1 { font-size: 70px; line-height: 1.04; font-weight: 800; margin: 26px 0 0; letter-spacing: -.02em; }
+.hero .dek { font-size: 24px; line-height: 1.45; color: var(--muted); max-width: 900px; margin: 26px 0 0; }
+.speaker { display: flex; align-items: center; gap: 18px; margin-top: 46px; }
+.speaker .avatar {
+  width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--surface-2); border: 1px solid var(--line); font: 700 19px var(--font); color: var(--cyan);
+}
+.speaker b { display: block; font-size: 23px; }
+.speaker span { color: var(--muted); font-size: 17px; }
+.motif { position: absolute; left: 0; right: 0; bottom: 6px; height: 64px; }
+.motif svg { width: 100%; height: 100%; overflow: visible; }
+.motif .packets { opacity: 1; }
+.motif text { font: 600 12px var(--mono); letter-spacing: .12em; fill: var(--dim); text-transform: uppercase; }
+.reveal .thanks h1 { font-size: 110px; margin: 0; }
