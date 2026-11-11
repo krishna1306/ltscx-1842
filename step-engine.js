@@ -16,16 +16,23 @@
  *       Types the text in once the scene reaches that step; clears when stepping back.
  * Scenes also emit a "step" CustomEvent (detail = step) for bespoke behaviour.
  *
+ * Click grouping: <section data-steps="8" data-beats="3,8"> needs only 2 clicks. Each click
+ * autoplays the internal steps up to its endpoint (autoplayMs apart); the section also gets
+ * data-beat="k" (clicks shown) so captions can use data-beat-at. Stepping back jumps instantly.
+ *
  * Usage (before Reveal.initialize):
  *   import { installStepScenes } from "./step-engine.js";
  *   installStepScenes(Reveal, { minimap: document.querySelector(".minimap") });
  */
 
-export function installStepScenes(Reveal, { minimap = null, maxSteps = 9 } = {}) {
+export function installStepScenes(Reveal, { minimap = null, maxSteps = 9, autoplayMs = 900 } = {}) {
+  const beatsOf = (s) => s.dataset.beats?.split(",").map(Number);
   document.querySelectorAll("section[data-steps]").forEach((s) => {
     const n = Number(s.dataset.steps);
     if (n > maxSteps) console.warn(`[step-scenes] #${s.id} has ${n} steps; utilities cover ${maxSteps}.`);
-    for (let i = 0; i < n; i++) {
+    const clicks = beatsOf(s)?.length ?? n;
+    if (beatsOf(s)) s.dataset.beat = "0";
+    for (let i = 0; i < clicks; i++) {
       const beat = document.createElement("span");
       beat.className = "fragment beat";
       beat.setAttribute("aria-hidden", "true");
@@ -67,9 +74,25 @@ export function installStepScenes(Reveal, { minimap = null, maxSteps = 9 } = {})
     });
   }
 
-  function applyStep(section) {
+  const timers = new WeakMap();
+
+  function applyStep(section, animate = false) {
     if (!section || !section.hasAttribute("data-steps")) return;
-    const step = section.querySelectorAll(".fragment.beat.visible").length;
+    clearInterval(timers.get(section));
+    const shown = section.querySelectorAll(".fragment.beat.visible").length;
+    const beats = beatsOf(section);
+    if (beats) section.dataset.beat = String(shown);
+    const target = beats ? (beats[shown - 1] ?? 0) : shown;
+    let step = Number(section.dataset.step);
+    if (!beats || !animate || target <= step + 1) { setStep(section, target); return; }
+    setStep(section, ++step);
+    timers.set(section, setInterval(() => {
+      setStep(section, ++step);
+      if (step >= target) clearInterval(timers.get(section));
+    }, autoplayMs));
+  }
+
+  function setStep(section, step) {
     section.dataset.step = String(step);
     for (let i = 1; i <= maxSteps; i++) section.classList.toggle("s" + i, i <= step);
     applyTracks(section, step);
@@ -87,6 +110,6 @@ export function installStepScenes(Reveal, { minimap = null, maxSteps = 9 } = {})
   const sync = (slide) => { applyStep(slide); updateMinimap(slide); };
   Reveal.on("ready", (e) => sync(e.currentSlide));
   Reveal.on("slidechanged", (e) => sync(e.currentSlide));
-  Reveal.on("fragmentshown", () => applyStep(Reveal.getCurrentSlide()));
+  Reveal.on("fragmentshown", () => applyStep(Reveal.getCurrentSlide(), true));
   Reveal.on("fragmenthidden", () => applyStep(Reveal.getCurrentSlide()));
 }

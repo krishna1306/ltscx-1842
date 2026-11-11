@@ -77,7 +77,9 @@ section[data-step="0"] .caps [data-at="0"], section[data-step="1"] .caps [data-a
 section[data-step="2"] .caps [data-at="2"], section[data-step="3"] .caps [data-at="3"],
 section[data-step="4"] .caps [data-at="4"], section[data-step="5"] .caps [data-at="5"],
 section[data-step="6"] .caps [data-at="6"], section[data-step="7"] .caps [data-at="7"],
-section[data-step="8"] .caps [data-at="8"], section[data-step="9"] .caps [data-at="9"] { opacity: 1; transform: none; }
+section[data-step="8"] .caps [data-at="8"], section[data-step="9"] .caps [data-at="9"],
+section[data-beat="0"] .caps [data-beat-at="0"], section[data-beat="1"] .caps [data-beat-at="1"],
+section[data-beat="2"] .caps [data-beat-at="2"], section[data-beat="3"] .caps [data-beat-at="3"] { opacity: 1; transform: none; }
 
 /* ---------- Minimap: persistent "where are we" map outside the slides ---------- */
 .minimap { position: fixed; top: 18px; right: 22px; z-index: 30; display: flex; gap: 4px; align-items: center;

@@ -72,7 +72,6 @@
     #s-value .log div { display: flex; gap: 10px; font: 12.5px var(--mono); color: var(--text); white-space: nowrap; }
     #s-value .log .sha { color: var(--blue); }
     #s-value .log em { margin-left: auto; }
-    #s-value[data-step="2"] .v1, #s-value[data-step="3"] .v1, #s-value[data-step="3"] .v2 { opacity: .4; }
     #s-value .vsum { position: absolute; left: 0; right: 0; top: 372px; display: flex; align-items: center;
       justify-content: center; gap: 18px; font: 700 22px var(--font); }
     #s-value .vsum i { flex: 0 0 70px; height: 1px; background: var(--line); }
@@ -140,7 +139,7 @@
   </section>
 
   <!-- 1 · Why DevOps, then what it means for a network (two lanes) -->
-  <section id="s-devops" data-steps="8" data-stage="devops">
+  <section id="s-devops" data-steps="8" data-beats="3,8" data-stage="devops">
     <div class="frame">
       <div class="eyebrow">01 · Why DevOps matters</div>
       <h2>Change often. Break nothing.</h2>
@@ -186,30 +185,18 @@
         </div>
       </div>
       <div class="caps">
-        <p data-at="0">Press <b>→</b> : what does DevOps actually give software teams?</p>
-        <p data-at="1"><span class="n">1</span>Developers push <b>many small changes</b> every day, often in parallel.</p>
-        <p data-at="2"><span class="n">2</span>Every change is <b>tested automatically</b> and <b>reviewed by a peer</b> before it merges.</p>
-        <p data-at="3"><span class="n">3</span>So production changes often <b>and stays stable</b>. The confidence comes from the process.</p>
-        <p data-at="4"><span class="n">4</span>Your network needs the same agility. <b>Same goal</b>, but the gates must speak network.</p>
-        <p data-at="5"><span class="n">5</span><b>Pre-change validation</b>: an invalid change, or one that breaks what exists, never leaves the pipeline.</p>
-        <p data-at="6"><span class="n">6</span>A <b>review policy</b> decides which changes need a senior engineer, and which flow straight through.</p>
-        <p data-at="7"><span class="n">7</span>After deploy, <b>tests prove it</b>: config landed, the network works as expected, health is intact.</p>
-        <p data-at="8"><span class="n">8</span>That is DevOps for the network, and it is exactly what <b>Services as Code</b> gives you.</p>
+        <p data-beat-at="0">Press <b>→</b> : what does DevOps actually give software teams?</p>
+        <p data-beat-at="1"><span class="n">1</span>Many small changes, each <b>tested and reviewed</b>, so production changes often <b>and stays stable</b>.</p>
+        <p data-beat-at="2"><span class="n">2</span>Your network needs the same, with gates that speak network. That is what <b>Services as Code</b> gives you.</p>
       </div>
     </div>
     <aside class="notes">3:30 total. Keep the software half short (about 60 seconds), the audience is network people.
-      1: "Developers make dozens of changes, many people at once."
-      2: Point at tests and review. "Nobody pushes straight to production."
-      3: "That is the real promise of DevOps: speed AND stability. Confidence comes from the process, not heroics."
-      4: Transition line: "Now imagine your network could change like that." The software lane fades: we are leaving it behind.
-      5: Point at the red chip. "A subnet that overlaps something already in production is stopped here, before any device sees it."
-      6: "You decide the policy. A BGP change waits for a senior engineer. A new VLAN can go straight through."
-      7: Three kinds of test: configuration (did it land), operational (is the network doing what we expect: neighbours up, endpoints learned), health (no new faults, health score not degraded where the controller provides one).
-      8: "Hold that picture. That is what Services as Code delivers."</aside>
+      Click 1 (software lane plays in): "Developers make dozens of changes, many people at once. Every change is tested automatically and reviewed by a peer; nobody pushes straight to production. That is the real promise of DevOps: speed AND stability. Confidence comes from the process, not heroics."
+      Click 2 (network lane plays in, software lane fades): "Now imagine your network could change like that. Same goal, but the gates must speak network." Point at the red chip: "A subnet that overlaps something already in production is stopped here, before any device sees it." Review policy: "A BGP change waits for a senior engineer. A new VLAN can go straight through." Tests: configuration (did it land), operational (neighbours up, endpoints learned), health (no new faults, health score not degraded). "Hold that picture. That is what Services as Code delivers."</aside>
   </section>
 
   <!-- 2 · What Services as Code does: one data model → validate, deploy, test -->
-  <section id="s-sac" data-steps="6" data-stage="sac">
+  <section id="s-sac" data-steps="6" data-beats="2,6" data-stage="sac">
     <div class="frame">
       <div class="eyebrow">02 · What Services as Code does</div>
       <h2>One data model drives everything.</h2>
@@ -275,26 +262,18 @@
         </div>
       </div>
       <div class="caps">
-        <p data-at="0">Press <b>→</b> : what does it take to describe one network change as code?</p>
-        <p data-at="1"><span class="n">1</span>With raw Terraform you own the plumbing: providers, resources, IDs, and the links between them.</p>
-        <p data-at="2"><span class="n">2</span>Services as Code abstracts the intent into a <b>data model</b>: readable, reviewable, no Terraform to learn.</p>
-        <p data-at="3"><span class="n">3</span>Because intent is structured, it is <b>validated</b> before deploy: schema, semantics, and your own rules.</p>
-        <p data-at="4"><span class="n">4</span>Cisco-maintained modules <b>deploy</b> that same model through Terraform, OpenTofu, or Ansible.</p>
-        <p data-at="5"><span class="n">5</span><b>Tests</b> come from the same model too: configuration, operational state, and health.</p>
-        <p data-at="6"><span class="n">6</span>One value, three uses. <b>Write intent once</b>; validate, deploy, and test it from one source of truth.</p>
+        <p data-beat-at="0">Press <b>→</b> : what does it take to describe one network change as code?</p>
+        <p data-beat-at="1"><span class="n">1</span>Raw Terraform makes you own the plumbing. Services as Code turns intent into a readable <b>data model</b>.</p>
+        <p data-beat-at="2"><span class="n">2</span><b>Write intent once</b>: the same model is validated, deployed, and tested from one source of truth.</p>
       </div>
     </div>
     <aside class="notes">4:00 total. This is the core of the talk; slow down here.
-      1: "This is what Terraform asks of you for one bridge domain with one subnet. Four resources, wired together by IDs. Now multiply by a data centre." Do not read the code.
-      2: "This is the same thing as a Network as Code data model. A network engineer can read it, and review it in a pull request, without learning Terraform or Ansible. Cisco's best-practice defaults fill in the rest."
-      3: "The most important consequence: because the intent is structured data, we can validate it. Is it well-formed, do references resolve, does this subnet overlap anything, does it follow YOUR rules."
-      4: "Cisco writes and maintains the Terraform, OpenTofu, and Ansible modules that turn the model into API calls. Over six years of delivery learnings, corner cases, and performance work are baked in."
-      5: "The same data generates the tests: config is there, the network is operating, health has not degraded."
-      6: Point at the highlighted subnet in all four places. "One line of intent. Validated, deployed, tested. That is why the data model is the heart of Services as Code."</aside>
+      Click 1 (Terraform, then the data model): "This is what Terraform asks of you for one bridge domain with one subnet. Four resources, wired together by IDs. Now multiply by a data centre." Do not read the code. When the YAML replaces it: "This is the same thing as a Network as Code data model. A network engineer can read it, and review it in a pull request, without learning Terraform or Ansible. Cisco's best-practice defaults fill in the rest."
+      Click 2 (validate, deploy, test, then the subnet highlight): "Because the intent is structured data, we can validate it: well-formed, references resolve, no overlapping subnet, follows YOUR rules. Cisco maintains the Terraform, OpenTofu, and Ansible modules that turn the model into API calls, with six years of delivery learnings baked in. The same data generates the tests: config is there, the network is operating, health has not degraded." Point at the highlighted subnet in all four places: "One line of intent. Validated, deployed, tested."</aside>
   </section>
 
   <!-- 3 · Business value: three outcome columns -->
-  <section id="s-value" data-steps="4" data-stage="value">
+  <section id="s-value" data-steps="4" data-beats="3,4" data-stage="value">
     <div class="frame">
       <div class="eyebrow">03 · Business value</div>
       <h2>Three outcomes the business will notice.</h2>
@@ -332,22 +311,21 @@
         <div class="vsum a4"><span>More change</span><i></i><span>Less risk</span><i></i><span>Full visibility</span></div>
       </div>
       <div class="caps">
-        <p data-at="0">Press <b>→</b> : what does the business actually get?</p>
-        <p data-at="1"><span class="n">1</span><b>More change, more confidence.</b> The pipeline stops what would break; tests catch the rest.</p>
-        <p data-at="2"><span class="n">2</span><b>Policy as code.</b> Standards and business rules are checked on every change, automatically.</p>
-        <p data-at="3"><span class="n">3</span><b>Full visibility.</b> What is configured, who changed it, and why: readable and searchable in Git.</p>
-        <p data-at="4"><span class="n">4</span>More change, less risk, full visibility: a network that moves at the speed of the business.</p>
+        <p data-beat-at="0">Press <b>→</b> : what does the business actually get?</p>
+        <p data-beat-at="1"><span class="n">1</span><b>Confident change</b>, <b>policy enforced as code</b>, and <b>full visibility</b> of what is configured.</p>
+        <p data-beat-at="2"><span class="n">2</span>More change, less risk, full visibility: a network that moves at the speed of the business.</p>
       </div>
     </div>
-    <aside class="notes">3:00 total. About 50 seconds per outcome.
-      1: "Remember the gates from slide one. Because bad changes are caught before production and tests verify after, teams stop fearing change. More changes, more often. AI is making the business move faster; the network has to keep up."
-      2: "Your standards, naming, approved designs, which customer gets what: written once as rules that run on every change. Policy lives in code, not in someone's head."
-      3: "Need to audit or investigate? You read the data model and Git history, not raw controller API output. You know exactly what is configured, who changed it, and who approved it."
-      4: Land the three words. Pause.</aside>
+    <aside class="notes">3:00 total.
+      Click 1 (three columns play in, left to right): about 50 seconds each.
+        Change: "Because bad changes are caught before production and tests verify after, teams stop fearing change. AI is making the business move faster; the network has to keep up."
+        Policy: "Your standards, naming, approved designs: written once as rules that run on every change. Policy lives in code, not in someone's head."
+        Visibility: "Need to audit or investigate? You read the data model and Git history, not raw controller API output. You know what is configured, who changed it, and who approved it."
+      Click 2 (summary line): land the three words. Pause.</aside>
   </section>
 
   <!-- 4 · Cisco IQ hosts the DevOps stack; call to action -->
-  <section id="s-iq" data-steps="4" data-stage="iq">
+  <section id="s-iq" data-steps="4" data-beats="2,4" data-stage="iq">
     <div class="frame">
       <div class="eyebrow">04 · Get started</div>
       <h2>No DevOps stack? Cisco IQ brings one.</h2>
@@ -372,18 +350,14 @@
         </div>
       </div>
       <div class="caps">
-        <p data-at="0">Press <b>→</b> : where does all of this actually run?</p>
-        <p data-at="1"><span class="n">1</span>Services as Code runs on a <b>DevOps stack</b>: Git, pipelines and runners, secrets, and state.</p>
-        <p data-at="2"><span class="n">2</span>Many network teams don't have one, and borrowing the app team's stack is rarely simple.</p>
-        <p data-at="3"><span class="n">3</span><b>Cisco IQ</b> comes with a DevOps stack built in, so you can start right away.</p>
-        <p data-at="4"><span class="n">4</span>Explore data models, guides, and labs at <b>netascode.cisco.com</b>.</p>
+        <p data-beat-at="0">Press <b>→</b> : where does all of this actually run?</p>
+        <p data-beat-at="1"><span class="n">1</span>Services as Code needs a <b>DevOps stack</b>, and many network teams don't have one they can use.</p>
+        <p data-beat-at="2"><span class="n">2</span><b>Cisco IQ</b> brings the stack built in. Scan or visit <b>netascode.cisco.com</b> to get started.</p>
       </div>
     </div>
     <aside class="notes">2:30 total.
-      1: "Everything you have seen needs somewhere to run: a Git repository, pipelines and runners, a secrets vault, and somewhere to keep state."
-      2: "Plenty of network teams don't have that. And if the application team has one, piggybacking on it is often harder than it sounds: different owners, different access, different priorities."
-      3: The stack slides into Cisco IQ. "If that is you, Cisco IQ comes with a DevOps stack, so you can start immediately and adopt Services as Code without building a platform first."
-      4: Give the URL slowly. "Everything I showed today is documented at netascode.cisco.com."</aside>
+      Click 1 (stack, then the blockers): "Everything you have seen needs somewhere to run: a Git repository, pipelines and runners, a secrets vault, and somewhere to keep state. Plenty of network teams don't have that. And piggybacking on the application team's stack is often harder than it sounds: different owners, different access, different priorities."
+      Click 2 (stack slides into Cisco IQ, then the link and QR): "If that is you, Cisco IQ comes with a DevOps stack, so you can adopt Services as Code without building a platform first." Give the URL slowly: "Everything I showed today is documented at netascode.cisco.com. Scan the code."</aside>
   </section>
 
   <!-- Close -->
